@@ -1,3 +1,6 @@
 spring:
   application:
-    name: fake-producer
+    name: fake-consumer
+
+server:
+  port: 8081
