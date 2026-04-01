@@ -115,6 +115,7 @@
 
     <modules>
         <module>kafka-sidecar</module>
+        <module>fake-producer</module>
     </modules>
 
 </project>
