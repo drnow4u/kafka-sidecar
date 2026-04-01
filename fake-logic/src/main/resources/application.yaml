@@ -1,3 +1,6 @@
 spring:
   application:
-    name: fake-producer
+    name: fake-logic
+
+server:
+  port: 8080
