@@ -6,11 +6,8 @@
         <groupId>com.github.drnow4u</groupId>
         <artifactId>kafka-sidecar-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-<!--        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
     </parent>
-    <groupId>com.github.drnow4u</groupId>
     <artifactId>kafka-sidecar</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>kafka-sidecar</name>
     <description>kafka-sidecar</description>
     <url/>
