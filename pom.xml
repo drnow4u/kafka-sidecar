@@ -114,7 +114,7 @@
     </dependencyManagement>
 
     <modules>
-        <module>sidecar</module>
+        <module>kafka-sidecar</module>
         <module>fake-producer</module>
         <module>fake-consumer</module>
         <module>fake-logic</module>
