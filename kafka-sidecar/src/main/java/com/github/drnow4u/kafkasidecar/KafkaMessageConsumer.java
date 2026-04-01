@@ -1,5 +1,6 @@
 package com.github.drnow4u.kafkasidecar;
 
+import com.github.drnow4u.kafkasidecar.model.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -11,33 +12,20 @@ import java.util.List;
 @Service
 public class KafkaMessageConsumer {
 
-    private final List<String> consumedMessages = new ArrayList<>();
+    private final List<Order> consumedOrders = new ArrayList<>();
 
-    /**
-     * Listens to the Kafka topic "events" and processes incoming messages.
-     *
-     * @param message the message received from Kafka
-     */
-    @KafkaListener(topics = "events", groupId = "kafka-sidecar-group")
-    public void consume(String message) {
-        log.info("Consumed message: {}", message);
-        consumedMessages.add(message);
+    @KafkaListener(topics = "orders", groupId = "kafka-sidecar-group")
+    public void consumeOrder(Order order) {
+        log.info("Consumed order: {}", order);
+        consumedOrders.add(order);
     }
 
-    /**
-     * Get all consumed messages (useful for testing).
-     *
-     * @return list of consumed messages
-     */
-    public List<String> getConsumedMessages() {
-        return new ArrayList<>(consumedMessages);
+    public List<Order> getConsumedOrders() {
+        return new ArrayList<>(consumedOrders);
     }
 
-    /**
-     * Clear consumed messages (useful for test isolation).
-     */
-    public void clearConsumedMessages() {
-        consumedMessages.clear();
+    public void clearConsumedOrders() {
+        consumedOrders.clear();
     }
 }
 
