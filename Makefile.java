@@ -124,18 +124,26 @@ class KafkaSidecarBuild {
     // ==================== HELM ====================
     private void helmInstall() {
         println(BLUE + "Installing Helm chart..." + RESET);
+        println(YELLOW + "⏳ Using --wait flag to wait for resources to be ready..." + RESET);
         runCommand("helm", "install", HELM_RELEASE, "./helm",
             "--namespace", HELM_NAMESPACE,
-            "--create-namespace");
-        println(GREEN + "✓ Helm chart installed" + RESET);
+            "--create-namespace",
+            "--wait",
+            "--wait-for-jobs",
+            "--timeout", "10m");
+        println(GREEN + "✓ Helm chart installed and all resources are ready!" + RESET);
         helmStatus();
     }
     
     private void helmUpgrade() {
         println(BLUE + "Upgrading Helm chart..." + RESET);
+        println(YELLOW + "⏳ Using --wait flag to wait for resources to be ready..." + RESET);
         runCommand("helm", "upgrade", HELM_RELEASE, "./helm",
-            "--namespace", HELM_NAMESPACE);
-        println(GREEN + "✓ Helm chart upgraded" + RESET);
+            "--namespace", HELM_NAMESPACE,
+            "--wait",
+            "--wait-for-jobs",
+            "--timeout", "10m");
+        println(GREEN + "✓ Helm chart upgraded and all resources are ready!" + RESET);
         helmStatus();
     }
     
