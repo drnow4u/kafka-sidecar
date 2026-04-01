@@ -46,10 +46,6 @@ class KafkaSidecarBuild {
         targets.put("build-tests", this::buildTests);
         targets.put("clean", this::clean);
         targets.put("test", this::test);
-        targets.put("docker-build", this::dockerBuild);
-        targets.put("docker-run", this::dockerRun);
-        targets.put("docker-stop", this::dockerStop);
-        targets.put("docker-status", this::dockerStatus);
         targets.put("helm-install", this::helmInstall);
         targets.put("helm-upgrade", this::helmUpgrade);
         targets.put("helm-uninstall", this::helmUninstall);
@@ -89,10 +85,6 @@ class KafkaSidecarBuild {
             case "build-tests" -> "Build with tests";
             case "clean" -> "Clean build artifacts";
             case "test" -> "Run all tests";
-            case "docker-build" -> "Build Docker images";
-            case "docker-run" -> "Start Docker Compose services";
-            case "docker-stop" -> "Stop Docker Compose services";
-            case "docker-status" -> "Show Docker status";
             case "helm-install" -> "Install Helm chart";
             case "helm-upgrade" -> "Upgrade Helm chart";
             case "helm-uninstall" -> "Uninstall Helm chart";
@@ -119,7 +111,6 @@ class KafkaSidecarBuild {
     private void clean() {
         println(BLUE + "Cleaning build artifacts..." + RESET);
         runCommand("./mvnw", "clean");
-        runCommand("docker", "system", "prune", "-f");
         println(GREEN + "✓ Clean complete" + RESET);
     }
     
@@ -128,44 +119,6 @@ class KafkaSidecarBuild {
         println(BLUE + "Running tests..." + RESET);
         runCommand("./mvnw", "test");
         println(GREEN + "✓ Tests complete" + RESET);
-    }
-    
-    // ==================== DOCKER ====================
-    private void dockerBuild() {
-        println(BLUE + "Building Docker images..." + RESET);
-        buildDockerImage("Dockerfile.producer", "fake-producer");
-        buildDockerImage("Dockerfile.logic", "fake-logic");
-        buildDockerImage("Dockerfile.consumer", "fake-consumer");
-        buildDockerImage("Dockerfile.sidecar", "kafka-sidecar");
-        println(GREEN + "✓ Docker images built" + RESET);
-    }
-    
-    private void buildDockerImage(String dockerfile, String imageName) {
-        println(BLUE + "  Building " + imageName + "..." + RESET);
-        runCommand("docker", "build", 
-            "-f", dockerfile, 
-            "-t", DOCKER_REGISTRY + "/" + imageName + ":latest", 
-            ".");
-    }
-    
-    private void dockerRun() {
-        println(BLUE + "Starting Docker Compose services..." + RESET);
-        runCommand("docker-compose", "up", "-d");
-        println(GREEN + "✓ Services started" + RESET);
-        println(YELLOW + "Waiting for services to be ready..." + RESET);
-        sleep(10);
-        dockerStatus();
-    }
-    
-    private void dockerStop() {
-        println(BLUE + "Stopping Docker Compose services..." + RESET);
-        runCommand("docker-compose", "down");
-        println(GREEN + "✓ Services stopped" + RESET);
-    }
-    
-    private void dockerStatus() {
-        println(BLUE + "Docker Compose Status:" + RESET);
-        runCommand("docker-compose", "ps");
     }
     
     // ==================== HELM ====================

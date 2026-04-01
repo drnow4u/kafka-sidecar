@@ -28,7 +28,6 @@ java -version
 
 ### Other Requirements
 - Maven 3.6+ (included via `./mvnw` wrapper)
-- Docker & Docker Compose (for container targets)
 - Kubernetes CLI (for K8s targets)
 - Helm 3+ (for Helm deployment)
 
@@ -54,21 +53,13 @@ java Makefile.java clean
 
 ### Build Targets
 
-| Target | Description |
-|--------|-------------|
-| `build` | Build all modules without tests |
-| `build-tests` | Build with full test suite |
-| `clean` | Clean build artifacts |
-| `test` | Run unit tests |
+| Target        | Description                     |
+|---------------|---------------------------------|
+| `build`       | Build all modules without tests |
+| `build-tests` | Build with full test suite      |
+| `clean`       | Clean build artifacts           |
+| `test`        | Run unit tests                  |
 
-### Docker Targets
-
-```bash
-java Makefile.java docker-build    # Build Docker images
-java Makefile.java docker-run      # Start services
-java Makefile.java docker-stop     # Stop services
-java Makefile.java docker-status   # Show status
-```
 
 ### Kubernetes/Helm Targets
 
@@ -104,13 +95,6 @@ java Makefile.java build
 javac Makefile.java && java -cp . KafkaSidecarBuild
 ```
 
-## Modern Java 21 Features Used
-
-- **Pattern Matching**: Switch expressions for target handling
-- **Local Variable Type Inference**: `var` keyword for cleaner code
-- **ProcessBuilder**: For cross-platform command execution
-- **String Formatting**: Enhanced printf capabilities
-
 ## Troubleshooting
 
 ### "java: command not found"
@@ -141,17 +125,16 @@ java Makefile.java build
 ## Documentation
 
 - **JAVA_BUILD_QUICK_REF.md** - Quick reference for build commands
-- **DOCKER_SETUP.md** - Docker deployment guide
 - **KUBERNETES_DEPLOYMENT.md** - Kubernetes setup
 - **HELM_DEPLOYMENT.md** - Helm chart deployment
-- **Makefile.java** - Build system implementation (274 lines)
+- **Makefile.java** - Build system implementation
 
 ## Performance
 
-| Operation | Time |
-|-----------|------|
-| Build | 5-10 seconds |
+| Operation        | Time          |
+|------------------|---------------|
+| Build            | 5-10 seconds  |
 | Build with tests | 20-30 seconds |
-| Docker build | 2-5 minutes |
-| Helm install | 30-60 seconds |
+| Docker build     | 2-5 minutes   |
+| Helm install     | 30-60 seconds |
 
