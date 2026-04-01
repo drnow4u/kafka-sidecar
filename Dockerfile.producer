@@ -1,13 +1,4 @@
-# Multi-stage build for fake-producer
-# Stage 1: Builder
-FROM eclipse-temurin:21-jdk-alpine AS builder
-
-WORKDIR /build
-COPY . .
-
-RUN ./mvnw clean package -DskipTests -pl fake-producer -q
-
-# Stage 2: Runtime
+# Runtime image for fake-producer
 FROM eclipse-temurin:21-jre-alpine
 
 LABEL maintainer="Kafka Sidecar Team"
@@ -15,10 +6,9 @@ LABEL description="Fake Producer - Generates fake orders every 1 second to Kafka
 
 WORKDIR /app
 
-# Copy JAR from builder stage
-COPY --from=builder /build/fake-producer/target/fake-producer-0.0.1-SNAPSHOT.jar app.jar
+# Copy pre-built JAR from local target directory
+COPY fake-producer/target/fake-producer-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose no ports (producer only sends to Kafka)
 EXPOSE 8080
 
 # Health check
