@@ -46,6 +46,7 @@ class KafkaSidecarBuild {
         targets.put("build-tests", this::buildTests);
         targets.put("clean", this::clean);
         targets.put("test", this::test);
+        targets.put("docker-build", this::dockerBuild);
         targets.put("helm-install", this::helmInstall);
         targets.put("helm-upgrade", this::helmUpgrade);
         targets.put("helm-uninstall", this::helmUninstall);
@@ -85,6 +86,7 @@ class KafkaSidecarBuild {
             case "build-tests" -> "Build with tests";
             case "clean" -> "Clean build artifacts";
             case "test" -> "Run all tests";
+            case "docker-build" -> "Build Docker images";
             case "helm-install" -> "Install Helm chart";
             case "helm-upgrade" -> "Upgrade Helm chart";
             case "helm-uninstall" -> "Uninstall Helm chart";
@@ -119,6 +121,25 @@ class KafkaSidecarBuild {
         println(BLUE + "Running tests..." + RESET);
         runCommand("./mvnw", "test");
         println(GREEN + "✓ Tests complete" + RESET);
+    }
+    
+    // ==================== DOCKER ====================
+    private void dockerBuild() {
+        println(BLUE + "Building Docker images..." + RESET);
+        buildDockerImage("Dockerfile.producer", "fake-producer");
+        buildDockerImage("Dockerfile.logic", "fake-logic");
+        buildDockerImage("Dockerfile.consumer", "fake-consumer");
+        buildDockerImage("Dockerfile.sidecar", "kafka-sidecar");
+        println(GREEN + "✓ Docker images built successfully!" + RESET);
+    }
+    
+    private void buildDockerImage(String dockerfile, String imageName) {
+        println(BLUE + "  Building " + imageName + "..." + RESET);
+        runCommand("docker", "build",
+            "-f", dockerfile,
+            "-t", "kafka-sidecar/" + imageName + ":latest",
+            ".");
+        println(GREEN + "  ✓ " + imageName + " image built" + RESET);
     }
     
     // ==================== HELM ====================
