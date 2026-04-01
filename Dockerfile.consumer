@@ -1,0 +1,30 @@
+# Multi-stage build for fake-consumer
+# Stage 1: Builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
+
+WORKDIR /build
+COPY . .
+
+RUN ./mvnw clean package -DskipTests -pl fake-consumer -q
+
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jre-alpine
+
+LABEL maintainer="Kafka Sidecar Team"
+LABEL description="Fake Consumer - Receives shipments from fake-logic"
+
+WORKDIR /app
+
+# Copy JAR from builder stage
+COPY --from=builder /build/fake-consumer/target/fake-consumer-0.0.1-SNAPSHOT.jar app.jar
+
+# Expose REST API port
+EXPOSE 8081
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:8081/api/shipments/health || exit 1
+
+# Run application
+ENTRYPOINT ["java", "-jar", "app.jar"]
+

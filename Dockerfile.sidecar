@@ -1,0 +1,30 @@
+# Multi-stage build for kafka-sidecar
+# Stage 1: Builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
+
+WORKDIR /build
+COPY . .
+
+RUN ./mvnw clean package -DskipTests -pl kafka-sidecar -q
+
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jre-alpine
+
+LABEL maintainer="Kafka Sidecar Team"
+LABEL description="Kafka Sidecar - Consumes orders from Kafka and forwards via REST"
+
+WORKDIR /app
+
+# Copy JAR from builder stage
+COPY --from=builder /build/kafka-sidecar/target/kafka-sidecar-0.0.1-SNAPSHOT.jar app.jar
+
+# No external ports (internal service)
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+
+# Run application
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
