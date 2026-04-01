@@ -1,0 +1,83 @@
+# Default values for kafka-sidecar Helm chart
+global:
+  namespace: kafka-sidecar
+  environment: production
+  imagePullPolicy: IfNotPresent
+zookeeper:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: confluentinc/cp-zookeeper
+    tag: "7.5.0"
+  port: 2181
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+kafka:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: confluentinc/cp-kafka
+    tag: "7.5.0"
+  port: 9092
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+fakeProducer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: kafka-sidecar/fake-producer
+    tag: latest
+  port: 8080
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+fakeLogic:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: kafka-sidecar/fake-logic
+    tag: latest
+  port: 8080
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits        memory: "512Mi"
+      cpu:       cpu:       cpu:     enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+fakeConsumer:
+  enabled: true
+  repli  repli  re  imag  r    repository: kafka-s  repli  ke-co  repli    tag: latest  repli  repli  resources:
+    requests:
+      memor      memor      cpu: "250m"
+    limits:
+      memory: "512Mi"
+                                      nable            minRe              maxReplicas:       targetC                  ntage: 70
+kafkaConfig:
+  bootstrapServers: "kafka-service:9092"
+  zookeeperServers: "zookeeper-service:2181"
+ingress:
+  enabled: false
+  className: nginx
+networkPolicy:
+  enabled: true
+serviceAccount:
+  create: true
+rbac:
+  create: true
