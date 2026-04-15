@@ -25,19 +25,6 @@ spec:
         prometheus.io/port: "8081"
         prometheus.io/path: "/actuator/prometheus"
     spec:
-      serviceAccountName: fake-consumer
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - fake-consumer
-              topologyKey: kubernetes.io/hostname
       containers:
       - name: fake-consumer
         image: kafka-sidecar/fake-consumer:latest

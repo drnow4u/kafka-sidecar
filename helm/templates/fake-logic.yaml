@@ -25,19 +25,6 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: "/actuator/prometheus"
     spec:
-      serviceAccountName: fake-logic
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - fake-logic
-              topologyKey: kubernetes.io/hostname
       containers:
       - name: fake-logic
         image: kafka-sidecar/fake-logic:latest

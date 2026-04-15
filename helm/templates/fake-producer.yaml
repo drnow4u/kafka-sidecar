@@ -25,7 +25,6 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: "/actuator/prometheus"
     spec:
-      serviceAccountName: fake-producer
       containers:
       - name: fake-producer
         image: kafka-sidecar/fake-producer:latest
