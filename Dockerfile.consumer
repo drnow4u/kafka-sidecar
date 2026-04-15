@@ -1,5 +1,5 @@
 # Runtime image for fake-consumer
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 LABEL maintainer="Kafka Sidecar Team"
 LABEL description="Fake Consumer - Receives shipments and manages deliveries"
 WORKDIR /app
