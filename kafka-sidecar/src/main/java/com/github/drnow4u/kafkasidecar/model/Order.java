@@ -19,8 +19,8 @@ public class Order implements Serializable {
     public Order() {
     }
 
-    public Order(String orderId, String customerId, List<CartItem> items, 
-                 BigDecimal totalAmount, String status, LocalDateTime createdAt, 
+    public Order(String orderId, String customerId, List<CartItem> items,
+                 BigDecimal totalAmount, String status, LocalDateTime createdAt,
                  String shippingAddress) {
         this.orderId = orderId;
         this.customerId = customerId;
@@ -90,14 +90,14 @@ public class Order implements Serializable {
     @Override
     public String toString() {
         return "Order{" +
-                "orderId='" + orderId + '\'' +
-                ", customerId='" + customerId + '\'' +
-                ", items=" + items +
-                ", totalAmount=" + totalAmount +
-                ", status='" + status + '\'' +
-                ", createdAt=" + createdAt +
-                ", shippingAddress='" + shippingAddress + '\'' +
-                '}';
+               "orderId='" + orderId + '\'' +
+               ", customerId='" + customerId + '\'' +
+               ", items=" + items +
+               ", totalAmount=" + totalAmount +
+               ", status='" + status + '\'' +
+               ", createdAt=" + createdAt +
+               ", shippingAddress='" + shippingAddress + '\'' +
+               '}';
     }
 }
 

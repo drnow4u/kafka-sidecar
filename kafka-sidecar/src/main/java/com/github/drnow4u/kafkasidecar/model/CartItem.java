@@ -53,11 +53,11 @@ public class CartItem {
     @Override
     public String toString() {
         return "CartItem{" +
-                "productId='" + productId + '\'' +
-                ", productName='" + productName + '\'' +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                '}';
+               "productId='" + productId + '\'' +
+               ", productName='" + productName + '\'' +
+               ", quantity=" + quantity +
+               ", price=" + price +
+               '}';
     }
 }
 
