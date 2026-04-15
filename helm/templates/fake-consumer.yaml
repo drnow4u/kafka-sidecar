@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: fake-consumer
-        image: kafka-sidecar/fake-consumer:latest
+        image: github.com/drnow4u/kafka-sidecar/fake-consumer:0.0.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8081

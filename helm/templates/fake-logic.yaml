@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: fake-logic
-        image: kafka-sidecar/fake-logic:latest
+        image: github.com/drnow4u/kafka-sidecar/fake-logic:0.0.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

@@ -137,7 +137,7 @@ class KafkaSidecarBuild {
         println(BLUE + "  Building " + imageName + "..." + RESET);
         runCommand("docker", "build",
             "-f", dockerfile,
-            "-t", "kafka-sidecar/" + imageName + ":latest",
+            "-t", "github.com/drnow4u/kafka-sidecar/" + imageName + ":0.0.1",
             ".");
         println(GREEN + "  ✓ " + imageName + " image built" + RESET);
     }
