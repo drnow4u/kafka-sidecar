@@ -171,8 +171,7 @@ class KafkaSidecarBuild {
     private void helmUninstall() {
         println(BLUE + "Uninstalling Helm chart..." + RESET);
         runCommand("helm", "uninstall", HELM_RELEASE,
-                "--namespace", HELM_NAMESPACE,
-                "--wait");
+                "--namespace", HELM_NAMESPACE);
         println(GREEN + "✓ Helm chart uninstalled" + RESET);
     }
 
