@@ -14,11 +14,6 @@ import java.util.Map;
 @RequestMapping("/api/shipments")
 public class ShipmentController {
 
-    @GetMapping("/health")
-    public ResponseEntity<Map<String, String>> health() {
-        return ResponseEntity.ok(Map.of("status", "UP"));
-    }
-
     @PostMapping
     public ResponseEntity<Map<String, Object>> receiveShipment(@RequestBody Shipment shipment) {
         log.info("Received shipment: {}", shipment);
