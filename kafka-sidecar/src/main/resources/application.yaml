@@ -10,10 +10,12 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.type.mapping: Order:com.github.drnow4u.kafkasidecar.model.Order
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.github.drnow4u.kafkasidecar.model.Order
+        spring.json.use.type.info.headers: "false"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 kafka:
   order-endpoint: http://localhost:8080/api/orders
-

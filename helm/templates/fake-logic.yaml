@@ -39,7 +39,7 @@ spec:
         - name: SERVER_PORT
           value: "8080"
         - name: SHIPMENT_ENDPOINT
-          value: "http://fake-consumer-service:8081/api/shipments"
+          value: "http://localhost:8090/api/shipments"
         - name: JAVA_OPTS
           value: "-Xms256m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
         resources:

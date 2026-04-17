@@ -16,7 +16,7 @@ public class OrderProducerScheduler {
         this.kafkaProducerService = kafkaProducerService;
     }
 
-    @Scheduled(fixedDelay = 1000, initialDelay = 1000)
+    @Scheduled(fixedDelay = 15000, initialDelay = 1000)
     public void produceOrder() {
         try {
             logger.debug("Scheduled order production triggered");
