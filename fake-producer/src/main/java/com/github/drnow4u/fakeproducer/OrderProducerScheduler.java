@@ -1,6 +1,5 @@
-package com.github.drnow4u.fakeproducer.scheduler;
+package com.github.drnow4u.fakeproducer;
 
-import com.github.drnow4u.fakeproducer.service.KafkaProducerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;

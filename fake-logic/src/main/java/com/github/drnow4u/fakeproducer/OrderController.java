@@ -1,8 +1,5 @@
-package com.github.drnow4u.fakeproducer.controller;
+package com.github.drnow4u.fakeproducer;
 
-import com.github.drnow4u.fakeproducer.model.Order;
-import com.github.drnow4u.fakeproducer.model.Shipment;
-import com.github.drnow4u.fakeproducer.service.ShipmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

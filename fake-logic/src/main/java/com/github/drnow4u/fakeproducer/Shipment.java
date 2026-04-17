@@ -1,4 +1,4 @@
-package com.github.drnow4u.fakeproducer.model;
+package com.github.drnow4u.fakeproducer;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -37,7 +37,6 @@ public class Shipment implements Serializable {
         this.shippingMethod = shippingMethod;
     }
 
-    // Getters and Setters
     public String getShipmentId() {
         return shipmentId;
     }

@@ -1,6 +1,5 @@
 package com.github.drnow4u.kafkasidecar;
 
-import com.github.drnow4u.kafkasidecar.model.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;

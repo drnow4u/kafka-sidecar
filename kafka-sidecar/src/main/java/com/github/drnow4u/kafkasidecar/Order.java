@@ -1,4 +1,4 @@
-package com.github.drnow4u.kafkasidecar.model;
+package com.github.drnow4u.kafkasidecar;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

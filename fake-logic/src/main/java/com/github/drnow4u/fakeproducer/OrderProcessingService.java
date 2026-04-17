@@ -1,7 +1,5 @@
-package com.github.drnow4u.fakeproducer.service;
+package com.github.drnow4u.fakeproducer;
 
-import com.github.drnow4u.fakeproducer.model.Order;
-import com.github.drnow4u.fakeproducer.model.CartItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,5 @@
 package com.github.drnow4u.kafkasidecar;
 
-import com.github.drnow4u.kafkasidecar.model.CartItem;
-import com.github.drnow4u.kafkasidecar.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

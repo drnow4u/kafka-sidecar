@@ -1,6 +1,5 @@
-package com.github.drnow4u.fakeproducer.consumer;
+package com.github.drnow4u.fakeproducer;
 
-import com.github.drnow4u.fakeproducer.model.Shipment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;

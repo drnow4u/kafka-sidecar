@@ -1,4 +1,4 @@
-package com.github.drnow4u.kafkasidecar.config;
+package com.github.drnow4u.kafkasidecar;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

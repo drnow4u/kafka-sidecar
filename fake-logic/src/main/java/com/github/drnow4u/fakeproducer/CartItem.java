@@ -1,4 +1,4 @@
-package com.github.drnow4u.fakeproducer.model;
+package com.github.drnow4u.fakeproducer;
 
 import java.math.BigDecimal;
 

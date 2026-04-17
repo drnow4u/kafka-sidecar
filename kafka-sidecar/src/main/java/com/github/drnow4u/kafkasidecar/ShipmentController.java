@@ -1,6 +1,5 @@
-package com.github.drnow4u.kafkasidecar.controller;
+package com.github.drnow4u.kafkasidecar;
 
-import com.github.drnow4u.kafkasidecar.model.Shipment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

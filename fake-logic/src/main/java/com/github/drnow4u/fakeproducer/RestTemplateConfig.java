@@ -1,4 +1,4 @@
-package com.github.drnow4u.fakeproducer.config;
+package com.github.drnow4u.fakeproducer;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

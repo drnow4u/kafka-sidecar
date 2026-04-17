@@ -1,6 +1,5 @@
 package com.github.drnow4u.kafkasidecar;
 
-import com.github.drnow4u.kafkasidecar.model.Order;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.test.context.TestConfiguration;

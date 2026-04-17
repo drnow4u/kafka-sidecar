@@ -1,7 +1,5 @@
-package com.github.drnow4u.fakeproducer.service;
+package com.github.drnow4u.fakeproducer;
 
-import com.github.drnow4u.fakeproducer.model.Order;
-import com.github.drnow4u.fakeproducer.model.CartItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
