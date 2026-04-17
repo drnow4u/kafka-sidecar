@@ -122,13 +122,6 @@ java Makefile.java clean
 java Makefile.java build
 ```
 
-## Documentation
-
-- **JAVA_BUILD_QUICK_REF.md** - Quick reference for build commands
-- **KUBERNETES_DEPLOYMENT.md** - Kubernetes setup
-- **HELM_DEPLOYMENT.md** - Helm chart deployment
-- **Makefile.java** - Build system implementation
-
 ## Performance
 
 | Operation        | Time          |
@@ -138,3 +131,84 @@ java Makefile.java build
 | Docker build     | 2-5 minutes   |
 | Helm install     | 30-60 seconds |
 
+## System Architecture
+
+### Complete Data Flow (UML Sequence Diagram)
+
+```mermaid
+sequenceDiagram
+    participant FakeProducer as fake-producer
+    participant Kafka as Kafka Broker
+    participant KafkaSidecar as kafka-sidecar
+    participant FakeLogic as fake-logic
+    participant FakeConsumer as fake-consumer
+
+    Note over FakeProducer,FakeConsumer: Order Processing Flow
+
+    %% Step 1: Produce Orders
+    FakeProducer->>FakeProducer: Generate Fake Order<br/>(every 1 second)
+    FakeProducer->>Kafka: Publish Order to 'orders' topic<br/>(KafkaTemplate)
+
+    %% Step 2: Consume Orders
+    Kafka->>KafkaSidecar: Deliver Order message<br/>(@KafkaListener: orders)
+    KafkaSidecar->>KafkaSidecar: Validate Order
+    KafkaSidecar->>KafkaSidecar: Store Order in memory
+    
+    %% Step 3: Forward Order to Logic
+    KafkaSidecar->>FakeLogic: POST /api/orders<br/>(RestTemplate)
+    FakeLogic->>FakeLogic: Receive Order
+    FakeLogic->>FakeLogic: Create Shipment<br/>(ShipmentService)
+    FakeLogic->>FakeLogic: Update Order to Shipment
+    
+    %% Step 4: Forward Shipment
+    FakeLogic->>FakeConsumer: POST /api/shipments<br/>(RestTemplate)
+    FakeConsumer->>FakeConsumer: Receive Shipment
+    FakeConsumer->>FakeConsumer: Validate Shipment
+    FakeConsumer->>FakeConsumer: Update Status to IN_TRANSIT
+    FakeConsumer->>FakeConsumer: Response (202 Accepted)
+    FakeLogic->>FakeProducer: Acknowledgement
+    
+    %% Step 5: Publish Shipment to Kafka
+    FakeConsumer->>Kafka: Publish Shipment to 'shipments' topic<br/>(HTTP → Kafka Bridge)
+    
+    %% Step 6: Consume Shipments
+    Kafka->>KafkaSidecar: Deliver Shipment message<br/>(@KafkaListener: shipments)
+    KafkaSidecar->>KafkaSidecar: Validate Shipment
+    KafkaSidecar->>KafkaSidecar: Store Shipment in memory
+    KafkaSidecar->>KafkaSidecar: Process Shipment<br/>(Update Status)
+
+    Note over FakeProducer,FakeConsumer: End of one complete cycle
+```
+
+### Component Interactions
+
+| Phase | Source | Destination | Protocol | Purpose |
+|-------|--------|-------------|----------|---------|
+| 1 | fake-producer | Kafka | KafkaTemplate | Produce orders |
+| 2 | Kafka | kafka-sidecar | @KafkaListener | Consume orders |
+| 3 | kafka-sidecar | fake-logic | HTTP RestTemplate | Forward orders |
+| 4 | fake-logic | fake-consumer | HTTP RestTemplate | Forward shipments |
+| 5 | fake-consumer | Kafka | KafkaTemplate | Publish shipments |
+| 6 | Kafka | kafka-sidecar | @KafkaListener | Consume shipments |
+
+### Kafka Topics
+
+| Topic | Producer | Consumer | Partitions | Purpose |
+|-------|----------|----------|-----------|---------|
+| `orders` | fake-producer | kafka-sidecar | 3 | Order distribution |
+| `shipments` | fake-consumer | kafka-sidecar | 1 | Shipment tracking |
+
+### Consumer Groups
+
+| Group | Service | Topics | Purpose |
+|-------|---------|--------|---------|
+| `kafka-sidecar-group` | kafka-sidecar | orders | Order consumption |
+| `kafka-sidecar-shipment-group` | kafka-sidecar | shipments | Shipment consumption |
+
+## Documentation
+
+- **ARCHITECTURE.md** - Detailed system design and data flow documentation
+- **JAVA_BUILD_QUICK_REF.md** - Quick reference for build commands
+- **KUBERNETES_DEPLOYMENT.md** - Kubernetes setup
+- **HELM_DEPLOYMENT.md** - Helm chart deployment
+- **Makefile.java** - Build system implementation
