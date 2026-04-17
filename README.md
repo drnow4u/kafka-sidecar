@@ -143,72 +143,75 @@ sequenceDiagram
     participant FakeLogic as fake-logic
     participant FakeConsumer as fake-consumer
 
-    Note over FakeProducer,FakeConsumer: Order Processing Flow
+    Note over FakeProducer,FakeConsumer: 📊 Order Processing Flow (Every 1 second)
 
     %% Step 1: Produce Orders
-    FakeProducer->>FakeProducer: Generate Fake Order<br/>(every 1 second)
-    FakeProducer->>Kafka: Publish Order to 'orders' topic<br/>(KafkaTemplate)
+    FakeProducer->>FakeProducer: Generate Fake Order
+    FakeProducer->>Kafka: Publish to 'orders' topic
 
     %% Step 2: Consume Orders
-    Kafka->>KafkaSidecar: Deliver Order message<br/>(@KafkaListener: orders)
-    KafkaSidecar->>KafkaSidecar: Validate Order
-    KafkaSidecar->>KafkaSidecar: Store Order in memory
-    
-    %% Step 3: Forward Order to Logic
-    KafkaSidecar->>FakeLogic: POST /api/orders<br/>(RestTemplate)
-    FakeLogic->>FakeLogic: Receive Order
-    FakeLogic->>FakeLogic: Create Shipment<br/>(ShipmentService)
-    FakeLogic->>FakeLogic: Update Order to Shipment
-    
-    %% Step 4: Forward Shipment
-    FakeLogic->>FakeConsumer: POST /api/shipments<br/>(RestTemplate)
-    FakeConsumer->>FakeConsumer: Receive Shipment
-    FakeConsumer->>FakeConsumer: Validate Shipment
-    FakeConsumer->>FakeConsumer: Update Status to IN_TRANSIT
-    FakeConsumer->>FakeConsumer: Response (202 Accepted)
-    FakeLogic->>FakeProducer: Acknowledgement
-    
-    %% Step 5: Publish Shipment to Kafka
-    FakeConsumer->>Kafka: Publish Shipment to 'shipments' topic<br/>(HTTP → Kafka Bridge)
-    
-    %% Step 6: Consume Shipments
-    Kafka->>KafkaSidecar: Deliver Shipment message<br/>(@KafkaListener: shipments)
-    KafkaSidecar->>KafkaSidecar: Validate Shipment
-    KafkaSidecar->>KafkaSidecar: Store Shipment in memory
-    KafkaSidecar->>KafkaSidecar: Process Shipment<br/>(Update Status)
+    Kafka->>KafkaSidecar: Deliver Order (@KafkaListener)
+    KafkaSidecar->>KafkaSidecar: Validate & Store Order
 
-    Note over FakeProducer,FakeConsumer: End of one complete cycle
+    %% Step 3: Forward Order via HTTP
+    KafkaSidecar->>FakeLogic: POST /api/orders (RestTemplate)
+    Note over FakeLogic: Order Reception
+
+    %% Step 4: Create Shipment
+    FakeLogic->>FakeLogic: Create Shipment<br/>(from Order)
+    FakeLogic->>FakeLogic: Set Carrier & Tracking
+
+    %% Step 5: Forward Shipment via HTTP
+    FakeLogic->>FakeConsumer: POST /api/shipments (RestTemplate)
+    FakeConsumer->>FakeConsumer: Validate Shipment
+    FakeConsumer->>FakeLogic: 202 Accepted Response
+
+    %% Step 6: Publish Shipment to Kafka
+    FakeConsumer->>Kafka: Publish to 'shipments' topic
+    Note over Kafka: HTTP → Kafka Bridge
+
+    %% Step 7: Consume Shipments
+    Kafka->>KafkaSidecar: Deliver Shipment (@KafkaListener)
+    KafkaSidecar->>KafkaSidecar: Validate & Process Shipment<br/>(Update Status to IN_TRANSIT)
+
+    Note over FakeProducer,FakeConsumer: ✅ Complete cycle ready for next iteration
 ```
 
 ### Component Interactions
 
-| Phase | Source | Destination | Protocol | Purpose |
-|-------|--------|-------------|----------|---------|
-| 1 | fake-producer | Kafka | KafkaTemplate | Produce orders |
-| 2 | Kafka | kafka-sidecar | @KafkaListener | Consume orders |
-| 3 | kafka-sidecar | fake-logic | HTTP RestTemplate | Forward orders |
-| 4 | fake-logic | fake-consumer | HTTP RestTemplate | Forward shipments |
-| 5 | fake-consumer | Kafka | KafkaTemplate | Publish shipments |
-| 6 | Kafka | kafka-sidecar | @KafkaListener | Consume shipments |
+| Phase | Source | Destination | Protocol | Data Format | Purpose |
+|-------|--------|-------------|----------|-------------|---------|
+| 1 | fake-producer | Kafka | KafkaTemplate | JSON Order | Produce orders every 1s |
+| 2 | Kafka | kafka-sidecar | @KafkaListener | JSON Order | Consume & validate orders |
+| 3 | kafka-sidecar | fake-logic | HTTP POST | JSON Order | Forward to business logic |
+| 4 | fake-logic | fake-logic | In-Process | Object | Transform Order → Shipment |
+| 5 | fake-logic | fake-consumer | HTTP POST | JSON Shipment | Send for fulfillment |
+| 6 | fake-consumer | Kafka | KafkaTemplate | JSON Shipment | Bridge HTTP → Kafka |
+| 7 | Kafka | kafka-sidecar | @KafkaListener | JSON Shipment | Track shipments |
 
 ### Kafka Topics
 
-| Topic | Producer | Consumer | Partitions | Purpose |
-|-------|----------|----------|-----------|---------|
-| `orders` | fake-producer | kafka-sidecar | 3 | Order distribution |
-| `shipments` | fake-consumer | kafka-sidecar | 1 | Shipment tracking |
+| Topic | Producer | Consumer | Partitions | Replication | Purpose |
+|-------|----------|----------|-----------|-------------|---------|
+| `orders` | fake-producer | kafka-sidecar | 3 | 1 | Order distribution & load balancing |
+| `shipments` | fake-consumer | kafka-sidecar | 1 | 1 | Shipment tracking & auditing |
 
 ### Consumer Groups
 
-| Group | Service | Topics | Purpose |
-|-------|---------|--------|---------|
-| `kafka-sidecar-group` | kafka-sidecar | orders | Order consumption |
-| `kafka-sidecar-shipment-group` | kafka-sidecar | shipments | Shipment consumption |
+| Group | Service | Topics | Purpose | Offset Strategy |
+|-------|---------|--------|---------|-----------------|
+| `kafka-sidecar-group` | kafka-sidecar | orders | Order consumption | earliest |
+| `kafka-sidecar-shipment-group` | kafka-sidecar | shipments | Shipment consumption | earliest |
+| `fake-consumer-shipment-group` | fake-consumer | shipments | Shipment processing | earliest |
 
-## Documentation
+### Service Communication Matrix
 
-- **ARCHITECTURE.md** - Detailed system design and data flow documentation
-- **JAVA_BUILD_QUICK_REF.md** - Quick reference for build commands
-- **KUBERNETES_DEPLOYMENT.md** - Kubernetes setup
-- **HELM_DEPLOYMENT.md** - Helm chart deployment
-- **Makefile.java** - Build system implementation
+```
+fake-producer ──Kafka──> kafka-sidecar
+                         │
+                         ├──HTTP POST──> fake-logic
+                                         │
+                                         ├──HTTP POST──> fake-consumer
+                                                         │
+                                                         └──Kafka──> kafka-sidecar
+```
