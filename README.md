@@ -139,8 +139,10 @@ java Makefile.java build
 sequenceDiagram
     participant FakeProducer as fake-producer
     participant Kafka as Kafka Broker
-    participant KafkaSidecar as kafka-sidecar
-    participant FakeLogic as fake-logic
+    box rgb(200, 220, 255) 🏢 Pod: fake-logic<br/>(Kubernetes)
+        participant KafkaSidecar as kafka-sidecar<br/>(container)
+        participant FakeLogic as fake-logic<br/>(container)
+    end
     participant FakeConsumer as fake-consumer
 
     Note over FakeProducer,FakeConsumer: 📊 Order Processing Flow (Every 1 second)
@@ -153,16 +155,16 @@ sequenceDiagram
     Kafka->>KafkaSidecar: Deliver Order (@KafkaListener)
     KafkaSidecar->>KafkaSidecar: Validate & Store Order
 
-    %% Step 3: Forward Order via HTTP
-    KafkaSidecar->>FakeLogic: POST /api/orders (RestTemplate)
-    Note over FakeLogic: Order Reception
+    %% Step 3: Forward Order via HTTP (localhost)
+    KafkaSidecar->>FakeLogic: POST /api/orders<br/>(RestTemplate - localhost)
+    Note over FakeLogic: HTTP via localhost<br/>(same pod)
 
     %% Step 4: Create Shipment
     FakeLogic->>FakeLogic: Create Shipment<br/>(from Order)
     FakeLogic->>FakeLogic: Set Carrier & Tracking
 
     %% Step 5: Forward Shipment via HTTP
-    FakeLogic->>FakeConsumer: POST /api/shipments (RestTemplate)
+    FakeLogic->>FakeConsumer: POST /api/shipments<br/>(RestTemplate)
     FakeConsumer->>FakeConsumer: Validate Shipment
     FakeConsumer->>FakeLogic: 202 Accepted Response
 
