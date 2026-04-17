@@ -53,6 +53,7 @@ class KafkaSidecarBuild {
         targets.put("helm-status", this::helmStatus);
         targets.put("k8s-status", this::k8sStatus);
         targets.put("test-api", this::testAPI);
+        targets.put("kafka-ui", this::kafkaUI);
     }
 
     void execute(String target) throws Exception {
@@ -93,6 +94,7 @@ class KafkaSidecarBuild {
             case "helm-status" -> "Show Helm status";
             case "k8s-status" -> "Show Kubernetes status";
             case "test-api" -> "Test REST APIs";
+            case "kafka-ui" -> "Open Kafka UI in browser";
             default -> "";
         };
     }
@@ -219,6 +221,27 @@ class KafkaSidecarBuild {
             println("");
         } catch (Exception e) {
             println(RED + "  ❌ Endpoint not responding" + RESET);
+        }
+    }
+
+    // ==================== KAFKA UI ====================
+    private void kafkaUI() {
+        println(BLUE + "Opening Kafka UI in browser..." + RESET);
+        String url = "http://localhost:8080/";
+
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("mac")) {
+                runCommand("open", url);
+            } else if (os.contains("linux")) {
+                runCommand("xdg-open", url);
+            } else if (os.contains("win")) {
+                runCommand("cmd", "/c", "start", url);
+            }
+            println(GREEN + "✓ Opening " + url + " in your browser" + RESET);
+        } catch (Exception e) {
+            println(YELLOW + "⚠ Could not open browser automatically" + RESET);
+            println(YELLOW + "Please manually open: " + url + RESET);
         }
     }
 
