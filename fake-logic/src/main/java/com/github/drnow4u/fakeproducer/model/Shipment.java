@@ -15,7 +15,7 @@ public class Shipment implements Serializable {
     private String shippingAddress;
     private LocalDateTime createdAt;
     private LocalDateTime estimatedDelivery;
-    private int itemCount;
+    private Integer itemCount;
     private String shippingMethod;
 
     public Shipment() {
@@ -23,7 +23,7 @@ public class Shipment implements Serializable {
 
     public Shipment(String shipmentId, String orderId, String customerId, String trackingNumber,
                     String carrier, String status, String shippingAddress, LocalDateTime createdAt,
-                    LocalDateTime estimatedDelivery, int itemCount, String shippingMethod) {
+                    LocalDateTime estimatedDelivery, Integer itemCount, String shippingMethod) {
         this.shipmentId = shipmentId;
         this.orderId = orderId;
         this.customerId = customerId;
@@ -109,11 +109,11 @@ public class Shipment implements Serializable {
         this.estimatedDelivery = estimatedDelivery;
     }
 
-    public int getItemCount() {
+    public Integer getItemCount() {
         return itemCount;
     }
 
-    public void setItemCount(int itemCount) {
+    public void setItemCount(Integer itemCount) {
         this.itemCount = itemCount;
     }
 
@@ -142,4 +142,3 @@ public class Shipment implements Serializable {
                 '}';
     }
 }
-
