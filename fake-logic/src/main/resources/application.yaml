@@ -6,5 +6,4 @@ server:
   port: 8080
 
 shipment:
-  endpoint: http://localhost:8081/api/shipments
-
+  endpoint: http://fake-consumer-service:8081/api/shipments
