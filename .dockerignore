@@ -1,0 +1,33 @@
+# Build and test artifacts
+target/
+*.jar
+*.class
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Maven
+.mvn/
+mvnw.cmd
+
+# Documentation
+README.md
+LICENSE
+*.md
+
+# Other
+*.log
+node_modules/
+.env
+.env.local
+

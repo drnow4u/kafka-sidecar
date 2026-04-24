@@ -1,0 +1,18 @@
+apiVersion: v2
+name: kafka-sidecar
+description: A Helm chart for Kafka Sidecar microservices with fake-producer, fake-logic, and fake-consumer
+type: application
+version: 1.0.0
+appVersion: "0.0.1"
+keywords:
+  - kafka
+  - microservices
+  - order-processing
+  - shipment-management
+home: https://github.com/drnow4u/kafka-sidecar
+sources:
+  - https://github.com/drnow4u/kafka-sidecar
+maintainers:
+  - name: Kafka Sidecar Team
+    email: team@kafka-sidecar.dev
+

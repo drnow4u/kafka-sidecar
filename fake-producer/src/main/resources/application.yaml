@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: fake-producer
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      properties:
+        linger.ms: 10
+        batch.size: 32768
+    topics:
+      orders:
+        name: orders
+        partitions: 3
+        replication-factor: 1
+      cart-items:
+        name: cart-items
+        partitions: 3
+        replication-factor: 1
+
+server:
+  port: 8080

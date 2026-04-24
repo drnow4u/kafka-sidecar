@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: fake-logic
+
+server:
+  port: 8080
+
+shipment:
+  endpoint: http://localhost:8090/api/shipments

@@ -1,0 +1,41 @@
+# Default values for kafka-sidecar Helm chart
+global:
+  namespace: kafka-sidecar
+
+zookeeper:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: confluentinc/cp-zookeeper
+    tag: "7.5.0"
+
+kafka:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: confluentinc/cp-kafka
+    tag: "7.5.0"
+
+fakeProducer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: kafka-sidecar/fake-producer
+    tag: latest
+
+fakeLogic:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: kafka-sidecar/fake-logic
+    tag: latest
+
+fakeConsumer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: kafka-sidecar/fake-consumer
+    tag: latest
+
+kafkaConfig:
+  bootstrapServers: "kafka-service:9092"
