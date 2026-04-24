@@ -44,11 +44,17 @@ java Makefile.java help
 # Build project (fastest, no tests)
 java Makefile.java build
 
-# Build with tests
-java Makefile.java build-tests
+# Build Docker image
+java Makefile.java docker-build
 
-# Clean artifacts
-java Makefile.java clean
+# Create Kubernetes cluster and deploy with Helm
+java Makefile.java helm-install
+
+# Open Kafka UI dashboard
+java Makefile.java kafka-ui
+
+# Uninstall cluster
+java Makefile.java helm-uninstall
 ```
 ![Makefile](doc/makefile-screenshot.png)
 
@@ -182,30 +188,30 @@ sequenceDiagram
 
 ### Component Interactions
 
-| Phase | Source | Destination | Protocol | Data Format | Purpose |
-|-------|--------|-------------|----------|-------------|---------|
-| 1 | fake-producer | Kafka | KafkaTemplate | JSON Order | Produce orders every 1s |
-| 2 | Kafka | kafka-sidecar | @KafkaListener | JSON Order | Consume & validate orders |
-| 3 | kafka-sidecar | fake-logic | HTTP POST | JSON Order | Forward to business logic |
-| 4 | fake-logic | fake-logic | In-Process | Object | Transform Order → Shipment |
-| 5 | fake-logic | fake-consumer | HTTP POST | JSON Shipment | Send for fulfillment |
-| 6 | fake-consumer | Kafka | KafkaTemplate | JSON Shipment | Bridge HTTP → Kafka |
-| 7 | Kafka | kafka-sidecar | @KafkaListener | JSON Shipment | Track shipments |
+| Phase | Source        | Destination   | Protocol       | Data Format   | Purpose                    |
+|-------|---------------|---------------|----------------|---------------|----------------------------|
+| 1     | fake-producer | Kafka         | KafkaTemplate  | JSON Order    | Produce orders every 1s    |
+| 2     | Kafka         | kafka-sidecar | @KafkaListener | JSON Order    | Consume & validate orders  |
+| 3     | kafka-sidecar | fake-logic    | HTTP POST      | JSON Order    | Forward to business logic  |
+| 4     | fake-logic    | fake-logic    | In-Process     | Object        | Transform Order → Shipment |
+| 5     | fake-logic    | fake-consumer | HTTP POST      | JSON Shipment | Send for fulfillment       |
+| 6     | fake-consumer | Kafka         | KafkaTemplate  | JSON Shipment | Bridge HTTP → Kafka        |
+| 7     | Kafka         | kafka-sidecar | @KafkaListener | JSON Shipment | Track shipments            |
 
 ### Kafka Topics
 
-| Topic | Producer | Consumer | Partitions | Replication | Purpose |
-|-------|----------|----------|-----------|-------------|---------|
-| `orders` | fake-producer | kafka-sidecar | 3 | 1 | Order distribution & load balancing |
-| `shipments` | fake-consumer | kafka-sidecar | 1 | 1 | Shipment tracking & auditing |
+| Topic       | Producer      | Consumer      | Partitions | Replication | Purpose                             |
+|-------------|---------------|---------------|------------|-------------|-------------------------------------|
+| `orders`    | fake-producer | kafka-sidecar | 3          | 1           | Order distribution & load balancing |
+| `shipments` | fake-consumer | kafka-sidecar | 1          | 1           | Shipment tracking & auditing        |
 
 ### Consumer Groups
 
-| Group | Service | Topics | Purpose | Offset Strategy |
-|-------|---------|--------|---------|-----------------|
-| `kafka-sidecar-group` | kafka-sidecar | orders | Order consumption | earliest |
-| `kafka-sidecar-shipment-group` | kafka-sidecar | shipments | Shipment consumption | earliest |
-| `fake-consumer-shipment-group` | fake-consumer | shipments | Shipment processing | earliest |
+| Group                          | Service       | Topics    | Purpose              | Offset Strategy |
+|--------------------------------|---------------|-----------|----------------------|-----------------|
+| `kafka-sidecar-group`          | kafka-sidecar | orders    | Order consumption    | earliest        |
+| `kafka-sidecar-shipment-group` | kafka-sidecar | shipments | Shipment consumption | earliest        |
+| `fake-consumer-shipment-group` | fake-consumer | shipments | Shipment processing  | earliest        |
 
 ### Service Communication Matrix
 
