@@ -50,6 +50,7 @@ java Makefile.java build-tests
 # Clean artifacts
 java Makefile.java clean
 ```
+![Makefile](doc/makefile-screenshot.png)
 
 ### Build Targets
 
