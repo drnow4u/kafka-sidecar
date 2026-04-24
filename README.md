@@ -1,7 +1,10 @@
 # kafka-sidecar
-Kafka sidecar for Kubernetes converting Kafka communication into HTTP to simplify business logic implementation
+Kafka sidecar for Kubernetes converting Kafka communication into HTTP to simplify business logic implementation, 
+testing, configuration and maintenance.
 
 ## Summary
+
+![Kafka Sidecar](doc/sidecar.jpeg)
 
 https://www.linkedin.com/posts/drnow_sidecarlimit-cloudnative-kubernetes-activity-7356065555612631043-5JmK?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAEcD94BlyEV9p28gHmVsj7_-ThEUTfTH_0
 
