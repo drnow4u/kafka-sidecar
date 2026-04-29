@@ -1,15 +1,16 @@
 package com.github.drnow4u.kafkasidecar;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,13 +20,16 @@ import java.util.Map;
 public class ShipmentController {
 
     private static final String SHIPMENT_TOPIC = "shipments";
+    private static final String X_KAFKA_KEY = "x-kafka-key";
 
     @Autowired
     private KafkaTemplate<String, Shipment> shipmentKafkaTemplate;
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> receiveShipment(@RequestBody Shipment shipment) {
-        log.info("Received shipment HTTP request: {}", shipment);
+    public ResponseEntity<Map<String, Object>> receiveShipment(
+            @RequestBody Shipment shipment,
+            @RequestHeader Map<String, String> httpHeaders) {
+        log.info("Received shipment HTTP request: {} with headers: {}", shipment, httpHeaders);
 
         if (!isValidShipment(shipment)) {
             log.warn("Invalid shipment received: {}", shipment.getShipmentId());
@@ -34,7 +38,7 @@ public class ShipmentController {
         }
 
         // Convert HTTP request to Kafka message
-        publishShipmentToKafka(shipment);
+        publishShipmentToKafka(shipment, httpHeaders);
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
@@ -51,15 +55,19 @@ public class ShipmentController {
         return ResponseEntity.accepted().body(response);
     }
 
-    private void publishShipmentToKafka(Shipment shipment) {
+    private void publishShipmentToKafka(Shipment shipment, Map<String, String> httpHeaders) {
         try {
-            Message<Shipment> message = MessageBuilder
-                    .withPayload(shipment)
-                    .setHeader(KafkaHeaders.TOPIC, SHIPMENT_TOPIC)
-                    .setHeader("kafka_messageKey", shipment.getShipmentId())
-                    .build();
+            String key = httpHeaders.get(X_KAFKA_KEY);
+            ProducerRecord<String, Shipment> producerRecord = new ProducerRecord<>(SHIPMENT_TOPIC, key, shipment);
 
-            shipmentKafkaTemplate.send(message)
+            // Add all HTTP headers to Kafka message
+            httpHeaders.forEach((headerKey, value) -> {
+                if (value != null && !isReservedHeader(headerKey)) {
+                    producerRecord.headers().add(new RecordHeader(headerKey, value.getBytes(StandardCharsets.UTF_8)));
+                }
+            });
+
+            shipmentKafkaTemplate.send(producerRecord)
                     .thenAccept(result -> {
                         log.info("Successfully published shipment {} to Kafka topic: {}",
                                 shipment.getShipmentId(), SHIPMENT_TOPIC);
@@ -73,6 +81,15 @@ public class ShipmentController {
             log.error("Error publishing shipment {} to Kafka: {}",
                     shipment.getShipmentId(), e.getMessage(), e);
         }
+    }
+
+    private boolean isReservedHeader(String headerName) {
+        String lowerHeader = headerName.toLowerCase();
+        return lowerHeader.equals(HttpHeaders.CONTENT_TYPE.toLowerCase())
+            || lowerHeader.equals(HttpHeaders.CONTENT_LENGTH.toLowerCase())
+            || lowerHeader.equals(HttpHeaders.HOST.toLowerCase())
+            || lowerHeader.equals(HttpHeaders.CONNECTION.toLowerCase())
+            || lowerHeader.equals(X_KAFKA_KEY);
     }
 
     private boolean isValidShipment(Shipment shipment) {

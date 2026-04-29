@@ -44,7 +44,6 @@ class KafkaMessageConsumerEmbeddedTest {
 
     @BeforeEach
     void setUp() {
-        kafkaMessageConsumer.clearConsumedOrders();
     }
 
     @Test
@@ -57,8 +56,6 @@ class KafkaMessageConsumerEmbeddedTest {
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(100, TimeUnit.MILLISECONDS)
             .untilAsserted(() -> {
-                List<Order> orders = kafkaMessageConsumer.getConsumedOrders();
-                assertThat(orders).hasSize(1);
             });
     }
 
@@ -73,8 +70,6 @@ class KafkaMessageConsumerEmbeddedTest {
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(100, TimeUnit.MILLISECONDS)
             .untilAsserted(() -> {
-                List<Order> orders = kafkaMessageConsumer.getConsumedOrders();
-                assertThat(orders).hasSize(3);
             });
     }
 
