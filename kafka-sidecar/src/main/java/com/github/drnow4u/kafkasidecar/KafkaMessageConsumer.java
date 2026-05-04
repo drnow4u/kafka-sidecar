@@ -32,6 +32,7 @@ public class KafkaMessageConsumer {
 
     @KafkaListener(topics = "orders", groupId = "kafka-sidecar-group")
     public void consumeOrder(ConsumerRecord<String, Order> consumerRecord) {
+        log.info("Received order record: {}", consumerRecord);
         Order order = consumerRecord.value();
         Headers headers = consumerRecord.headers();
         String key = consumerRecord.key();

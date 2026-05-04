@@ -57,7 +57,8 @@ public class KafkaProducerService {
         Message<Order> message = MessageBuilder
                 .withPayload(order)
                 .setHeader(KafkaHeaders.TOPIC, ORDER_TOPIC)
-                .setHeader("kafka_messageKey", order.getOrderId())
+                .setHeader(KafkaHeaders.KEY, order.getOrderId())
+                .setHeader("X-B3-TraceId", UUID.randomUUID().toString().replace("-", ""))
                 .build();
         
         return kafkaTemplate.send(message)
